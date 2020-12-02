@@ -1,1 +1,6 @@
 .env
+
+
+devs/
+ping/
+node_modules/
