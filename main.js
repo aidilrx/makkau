@@ -1,32 +1,77 @@
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const Bot = require('./Bot');
+require('dotenv').config();
 
 const PREFIX = "mk";
+const commands = {};
+const Makkau = new Bot.Bot(
+  process.env.token,
+  "mk",
+  commands
+);
 
-const COMMANDS = [];
+Makkau.login();
 
-client.on("ready", function () {
-  console.log("Makkau is online");
-});
+function greet(channel) {
+  // bot.channel.send('Hello there');
+  channel.send('Hello There');
+}
 
-client.on("message", function (msg) {
-  if (!msg.content.startsWith(PREFIX) || msg.author.bot) return;
+function ayam(channel) {
+    channel.send('Ayam is not here');
+}
 
-  console.log(msg.content.startsWith(PREFIX));
+function hotmilf(c, cmd) {
+    c.send("https://pbs.twimg.com/media/EXWDxpRVcAAgijK.jpg");
+}
 
-  const args = msg.content.slice(PREFIX.length).split(/ +/);
+function setPrefix(c, cmd, bot) {
+    const args = cmd.slice(1);
+    if(args.length < 1 || args[0] === '') {
+        c.send('You need to provide the prefix bitch.');
+        return;
+    }
 
-  if(args.length < 1) return;
-  
-  const commands = args.shift().toLowerCase();
-  
-  if (commands.length < 1) {
-    msg.channel.send("Makkau is here bitch!");
-  } else if (commands == "ayam") {
-    msg.channel.send("Ayam is not here.");
-  } else if (commands == "hotmilf") {
-    msg.channel.send("https://pbs.twimg.com/media/EXWDxpRVcAAgijK.jpg");
-  }
-});
+    bot.setPrefix(args[0]);
+    c.send('This bot prefix has been change to '+ bot.prefix);
+}
 
-client.login("NzgzMzczNzYwNjU2MzEwMjky.X8Zzqg.7_zFmw9YeiADaekTQZoBXr0jKKY");
+function randomPic(c) {
+    let seed = 0;
+    while(seed < 200 || seed > 2000) {
+        seed = Math.floor(Math.random() * 1500);
+    }
+    c.send('https://picsum.photos/'+seed);
+}
+
+function showCommands(c, cmd, bot) {
+    let cmdKeys= Object.keys(bot.commands);
+    cmdKeys = cmdKeys.filter(key => key !== '');
+    cmdKeys = cmdKeys.sort()
+
+    let msg = "Dude i only have these commands:\n `" + cmdKeys[0] + "`";
+    for(let i = 1; i< cmdKeys.length; i++) {
+        msg += `, \`\`${cmdKeys[i]}\`\``;
+    }
+    msg += '';
+
+    let embed = new Discord.MessageEmbed()
+        .setColor('#ff0000')
+        .setTitle('Makkau Commands')
+        .setDescription(msg)
+        .setThumbnail('https://media.comicbook.com/2017/04/love-live-nico-nico-nii-988962-1280x0.png')
+    c.send(embed);
+}
+
+
+const upcomingCommands = [
+    ['hotmilf', hotmilf],
+    ['prefix', setPrefix],
+    ['randompic', randomPic],
+    ['ayam', ayam],
+    ['commands', showCommands]
+]
+
+for(let i in upcomingCommands) {
+    Makkau.addCommand(upcomingCommands[i][0], upcomingCommands[i][1]);
+}
