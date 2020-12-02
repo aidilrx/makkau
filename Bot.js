@@ -37,9 +37,8 @@ class Bot {
     });
 
     this.bot.on("message", (msg) => {
-      // do nothing if message is not start with prefix
-      //console.log(msg.content.startsWith(this.prefix));
-      //console.log(msg.author.bot);
+
+      // do nothing if message is not start with prefix or author is bot itself
       if (!msg.content.startsWith(this.prefix) || msg.author.bot) return;
 
       const args = msg.content.slice(this.prefix.length).split(/ +/);
